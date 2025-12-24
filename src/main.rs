@@ -74,10 +74,10 @@ fn handle_message(message: Message, stream: TcpStream) -> Result<(), HandlerErro
     
     fs::create_dir_all(&work_dir)?;
     
-    let script_path = format!("{work_dir}/script.js");
+    let script_path = format!("{work_dir}/program.py");
     fs::write(&script_path, message.code)?;
 
-    let mut child = Command::new("node")
+    let mut child = Command::new("python3")
     .arg(&script_path)
     .stdin(Stdio::piped())
     .stdout(Stdio::piped())
@@ -125,6 +125,8 @@ fn handle_message(message: Message, stream: TcpStream) -> Result<(), HandlerErro
 
     fs::remove_dir_all(&work_dir)?;
 
+    clean_up()?;
+
     Ok(())
 }
 
@@ -140,4 +142,12 @@ fn read_content_from_stream(stream: &mut TcpStream) -> Result<Message, HandlerEr
     let (message, _message_length): (Message, usize) =
         bincode::decode_from_slice(&message_buffer[..], config::standard())?;
     Ok(message)
+}
+
+fn clean_up() -> Result<(), HandlerError> {
+    let _ = Command::new("find")
+        .args(["/tmp", "-mindepth", "1", "-delete"])
+        .status()?;
+
+    Ok(())
 }

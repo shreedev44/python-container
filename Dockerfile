@@ -1,7 +1,7 @@
 FROM alpine:3.20
 
 RUN apk add --no-cache \
-    nodejs \
+    python3 \
     ca-certificates
 
 # ---- Create non-root user ----
