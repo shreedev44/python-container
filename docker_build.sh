@@ -2,4 +2,4 @@
 
 cargo build --release --target x86_64-unknown-linux-musl
 
-docker build -t executor-python .
+docker build -t executor-python:1.0.0 .
